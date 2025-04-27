@@ -43,6 +43,7 @@ const display = document.querySelector("div.display");
 const digits = document.querySelectorAll("button.num");
 const operators = document.querySelectorAll("button.operator");
 const calc = document.querySelector("button.equal");
+const clear = document.querySelector("button.clear");
 
 function enableCalc() {
 
@@ -86,6 +87,13 @@ function enableCalc() {
         display.textContent = result;
         numOne = result;
         numTwo = "";
+    });
+
+    clear.addEventListener("click", () => {
+        numOne = 0;
+        numTwo = 0;
+        result = 0;
+        display.textContent = "";
     });
 }
 
