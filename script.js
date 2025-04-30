@@ -8,9 +8,9 @@ const divide = (a = 1, b = 1) => {
 }
 
 // OPERATOR HANDLING
-let numOne = "";
-let numTwo = "";
-let operator = "";
+let numOne = 0;
+let numTwo = 0;
+let operator;
 
 const allowedNumbers = "1234567890";
 const numArray = allowedNumbers.split("");
@@ -45,13 +45,15 @@ const operators = document.querySelectorAll("button.operator");
 const calc = document.querySelector("button.equal");
 const clear = document.querySelector("button.clear");
 
+display.textContent = 0;
+
 function enableCalc() {
 
     function updateDisplayNum(digit) {
         let opCheck = display.textContent.split("");
         if (!opCheck.some((char) => opArray.includes(char))) {
             numOne += digit.textContent;
-            display.textContent = numOne;
+            display.textContent = Number(numOne);
         } else {
             numTwo += digit.textContent;
             display.textContent += digit.textContent;
@@ -66,7 +68,7 @@ function enableCalc() {
 
     function updateDisplayOp(op) {
         let opCheck = display.textContent.split("");
-        if (!opCheck.some((char) => opArray.includes(char))) {
+        if (!opCheck.slice(1).some((char) => opArray.includes(char))) {
             if (!opArray.includes(opCheck[opCheck.length-1])) {
                 display.textContent += op.textContent;
             } else {
@@ -85,15 +87,17 @@ function enableCalc() {
     calc.addEventListener("click", () => {
         let result = operate(numOne, numTwo, operator);
         display.textContent = result;
-        numOne = result;
-        numTwo = "";
+        // remove this if-else block once figured out how to append only operators and not digits once the result is calculated
+        if (result === NaN || result === "Err: Division by Zero") numOne = 0;
+        else numOne = result;
+        numTwo = 0;
     });
 
     clear.addEventListener("click", () => {
         numOne = 0;
         numTwo = 0;
         result = 0;
-        display.textContent = "";
+        display.textContent = 0;
     });
 }
 
