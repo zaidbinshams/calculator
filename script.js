@@ -11,6 +11,8 @@ const divide = (a = 1, b = 1) => {
 let numOne = 0;
 let numTwo = 0;
 let operator;
+let resultFlag;
+let errorFlag;
 
 const allowedNumbers = "1234567890";
 const numArray = allowedNumbers.split("");
@@ -52,6 +54,10 @@ function enableCalc() {
     function updateDisplayNum(digit) {
         let opCheck = display.textContent.split("");
         if (!opCheck.some((char) => opArray.includes(char))) {
+            if (resultFlag === true) {
+                numOne = 0;
+                resultFlag = false;
+            }
             numOne += digit.textContent;
             display.textContent = Number(numOne);
         } else {
@@ -63,22 +69,29 @@ function enableCalc() {
     }
 
     digits.forEach((digit) => {
-        digit.addEventListener("click", (e) => updateDisplayNum(e.target));
+        digit.addEventListener("click", (e) => {
+            errorFlag = false;
+            updateDisplayNum(e.target);
+        });
     });
 
     function updateDisplayOp(op) {
-        let opCheck = display.textContent.split("");
-        if (!opCheck.slice(1).some((char) => opArray.includes(char))) {
-            if (!opArray.includes(opCheck[opCheck.length-1])) {
-                display.textContent += op.textContent;
-            } else {
-                opCheck.pop();
-                display.textContent = opCheck.join("") + op.textContent;
-            }
-            operator = op.textContent;
+        if (errorFlag === true) {
+            display.textContent = "Action Not Allowed";
         } else {
-            calc.click();
-            updateDisplayOp(op);
+            let opCheck = display.textContent.split("");
+            if (!opCheck.slice(1).some((char) => opArray.includes(char))) {
+                if (!opArray.includes(opCheck[opCheck.length-1])) {
+                    display.textContent += op.textContent;
+                } else {
+                    opCheck.pop();
+                    display.textContent = opCheck.join("") + op.textContent;
+                }
+                operator = op.textContent;
+            } else {
+                calc.click();
+                updateDisplayOp(op);
+            }
         }
     }
 
@@ -87,9 +100,13 @@ function enableCalc() {
     calc.addEventListener("click", () => {
         let result = operate(numOne, numTwo, operator);
         display.textContent = result;
-        // remove this if-else block once figured out how to append only operators and not digits once the result is calculated
-        if (result === NaN || result === "Err: Division by Zero") numOne = 0;
-        else numOne = result;
+        console.log(typeof result);
+        
+        console.log(typeof result !== "number");
+        
+        resultFlag = true;
+        if (result === NaN || typeof result !== "number") errorFlag = true;
+        numOne = result;
         numTwo = 0;
     });
 
@@ -102,6 +119,3 @@ function enableCalc() {
 }
 
 enableCalc();
-
-// after the result is diplayed,
-// pressing a new digit doesn't refresh the screen
